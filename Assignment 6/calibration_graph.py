@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
 
-# Sample data: Voltage (sensor readings) and Gravimetric Soil Moisture (%)
+# Sample data: Voltage (sensor readings) / Gravimetric Soil Moisture (%)
 voltage_values = [2883, 2331, 1527]  # Example voltage values
 moisture_values = [83.3, 62.5, 37.5]  # Example moisture percentages
 
