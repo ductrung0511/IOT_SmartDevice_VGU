@@ -1,73 +1,101 @@
-#include <Arduino.h>
 #include <TinyGPSPlus.h>
 #include <HardwareSerial.h>
+#include <Arduino.h>
 
-// Use pins 12 (RX) and 13 (TX) for GPS
-HardwareSerial GPSSerial(1);  // Use Serial1 on ESP32 (change if using different board)
+// For ESP32: use UART2 (pins RX=16, TX=17 as an example)
+HardwareSerial GPSSerial(2);
 TinyGPSPlus gps;
 
 void setup() {
-  Serial.begin(9600);
-  GPSSerial.begin(9600, SERIAL_8N1, 12, 13); // RX = 12, TX = 13
-  Serial.println("GPS Module Test Started...");
+  Serial.begin(115200);
+  GPSSerial.begin(9600, SERIAL_8N1, 16, 17); // RX, TX
+  Serial.println(F("GPS Data Logger Initialized"));
 }
 
-void GPS() {
-  static unsigned long lastRun = 0;
-
-  // Only run every 5000 milliseconds (5 seconds)
-  if (millis() - lastRun < 5000) return;
-  lastRun = millis();
-
-  // Feed data into GPS parser
+void loop() {
+  // Feed GPS data to the parser
   while (GPSSerial.available() > 0) {
     gps.encode(GPSSerial.read());
   }
 
-  if (gps.location.isValid()) {
-    Serial.print(F("- latitude: "));
-    Serial.println(gps.location.lat(), 6);
+  static unsigned long lastDisplay = 0;
+  if (millis() - lastDisplay > 5000) { // Display every 5 seconds
+    lastDisplay = millis();
 
-    Serial.print(F("- longitude: "));
-    Serial.println(gps.location.lng(), 6);
+    Serial.println(F("===== GPS DATA ====="));
 
-    Serial.print(F("- altitude: "));
-    if (gps.altitude.isValid())
-      Serial.println(gps.altitude.meters());
-    else
-      Serial.println(F("INVALID"));
-  } else {
-    Serial.println(F("- location: INVALID"));
+    // Location
+    if (gps.location.isValid()) {
+      Serial.print(F("Latitude: "));
+      Serial.println(gps.location.lat(), 6);
+      Serial.print(F("Longitude: "));
+      Serial.println(gps.location.lng(), 6);
+    } else {
+      Serial.println(F("Location: INVALID"));
+    }
+
+    // Altitude
+    if (gps.altitude.isValid()) {
+      Serial.print(F("Altitude: "));
+      Serial.print(gps.altitude.meters());
+      Serial.println(F(" m"));
+    } else {
+      Serial.println(F("Altitude: INVALID"));
+    }
+
+    // Speed
+    if (gps.speed.isValid()) {
+      Serial.print(F("Speed: "));
+      Serial.print(gps.speed.kmph());
+      Serial.println(F(" km/h"));
+    } else {
+      Serial.println(F("Speed: INVALID"));
+    }
+
+    // Course (direction)
+    if (gps.course.isValid()) {
+      Serial.print(F("Course: "));
+      Serial.print(gps.course.deg());
+      Serial.println(F("°"));
+    } else {
+      Serial.println(F("Course: INVALID"));
+    }
+
+    // Date and Time
+    if (gps.date.isValid() && gps.time.isValid()) {
+      Serial.print(F("Date: "));
+      Serial.print(gps.date.day());
+      Serial.print(F("/"));
+      Serial.print(gps.date.month());
+      Serial.print(F("/"));
+      Serial.println(gps.date.year());
+
+      Serial.print(F("Time (UTC): "));
+      Serial.print(gps.time.hour());
+      Serial.print(F(":"));
+      Serial.print(gps.time.minute());
+      Serial.print(F(":"));
+      Serial.println(gps.time.second());
+    } else {
+      Serial.println(F("Date/Time: INVALID"));
+    }
+
+    // Satellites
+    if (gps.satellites.isValid()) {
+      Serial.print(F("Satellites: "));
+      Serial.println(gps.satellites.value());
+    } else {
+      Serial.println(F("Satellites: INVALID"));
+    }
+
+    // HDOP (precision)
+    if (gps.hdop.isValid()) {
+      Serial.print(F("HDOP: "));
+      Serial.println(gps.hdop.value());
+    } else {
+      Serial.println(F("HDOP: INVALID"));
+    }
+
+    Serial.println(F("=====================\n"));
   }
-
-  Serial.print(F("- speed: "));
-  if (gps.speed.isValid()) {
-    Serial.print(gps.speed.kmph());
-    Serial.println(F(" km/h"));
-  } else {
-    Serial.println(F("INVALID"));
-  }
-
-  Serial.print(F("- GPS date&time: "));
-  if (gps.date.isValid() && gps.time.isValid()) {
-    Serial.print(gps.date.year());
-    Serial.print(F("-"));
-    Serial.print(gps.date.month());
-    Serial.print(F("-"));
-    Serial.print(gps.date.day());
-    Serial.print(F(" "));
-    Serial.print(gps.time.hour());
-    Serial.print(F(":"));
-    Serial.print(gps.time.minute());
-    Serial.print(F(":"));
-    Serial.println(gps.time.second());
-  } else {
-    Serial.println(F("INVALID"));
-  }
-
-  Serial.println();
-}
-
-void loop() {
-  GPS(); // Call the GPS function regularly
 }
