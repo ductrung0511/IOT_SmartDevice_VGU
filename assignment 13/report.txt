@@ -1,0 +1,10 @@
+Web functionality you need to build based on the instructions, I want to use React instead of Azure Web Apps for simplicity and better performance.
+The core functionality I implemented is a web page that:
+Displays a Map: a web SDK into my React application to show an interactive map.
+Fetches GPS Data from Supabase Storage: React app communicate with your Storage account to retrieve the JSON files containing the GPS coordinates. 
+This involves handling CORS (Cross-Origin Resource Sharing).
+Parses the GPS Data: The fetched data, which is in JSON format (with lat and lon properties), needs to be parsed in React application.
+Visualizes GPS Data on the Map: The parsed GPS coordinates should be displayed as markers (specifically "bubbles" as mentioned in the lesson) on the Map.
+Each JSON file in storage represents a GPS point.
+ => The web functionality using React is a web page that loads a Map and plots all the historical GPS coordinates stored in your Supabase Storage as individual markers on that map.
+
