@@ -1,0 +1,11 @@
+This Arduino sketch utilizes the TinyGPSPlus library with an ESP32 and a GPS module connected to UART2 (RX pin 16, TX pin 17)
+to collect and display a wide range of GPS data every five seconds. The code begins by initializing the serial communication with both the Serial Monitor and the GPS module.
+In the main loop, it reads incoming GPS data continuously using gps.encode() and processes it to extract valuable information.
+
+Every 5 seconds, the code prints a comprehensive report to the Serial Monitor,
+including location coordinates (latitude and longitude), altitude above sea level, speed in kilometers per hour, course direction in degrees, current UTC date and time, 
+number of visible satellites, and the Horizontal Dilution of Precision (HDOP), which indicates the accuracy of the GPS fix.
+
+Each data point is validated using isValid() before printing to ensure that only accurate, available information is displayed. 
+If a data point is invalid, it prints “INVALID” as a fallback. This makes the program highly reliable for real-world applications such as IoT-based tracking, logging, or navigation systems.
+The code is modular and can be easily extended to log GPS data to storage, display it on an OLED, or send it to a cloud server.
