@@ -39,7 +39,7 @@ int lcdDisplay() {
   display.setTextColor(SSD1306_WHITE);
 
   display.setCursor(0, 0);
-  display.println("Fruit Details:");
+  display.println("Fruit Detailss:");
 
   display.setCursor(0, 10);
   display.print("Fruit: ");
