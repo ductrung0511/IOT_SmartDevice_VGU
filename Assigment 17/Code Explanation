@@ -1,0 +1,15 @@
+This ESP32 code connects to WiFi and subscribes to an MQTT topic to receive fruit ripeness data, which is displayed on a 128x64 OLED screen. It also reads an image from the onboard SPIFFS filesystem (`/image.jpg`), encodes it in Base64, and publishes it every 10 seconds to a separate MQTT topic.
+
+**WiFi and MQTT Setup:**
+The ESP32 connects to the specified WiFi and MQTT broker (`broker.hivemq.com`) using a client ID. On connection, it subscribes to a fruit ripeness topic.
+
+**MQTT Callback:**
+When a message is received, it is parsed using `ArduinoJson`. The extracted data includes the fruit type, its confidence score, ripeness level, and ripeness confidence. This data is printed to the serial monitor and displayed on the OLED using the `lcdDisplay()` function.
+
+**Image Sending:**
+Every 10 seconds, `sendImage()` reads chunks of the image file from SPIFFS, Base64-encodes them, and publishes the result. If the encoded string exceeds 4096 characters, it is sent in parts to prevent buffer overflow.
+
+**Main Loop:**
+Ensures MQTT connection remains active and checks the timer to send images periodically.
+
+This setup is ideal for IoT scenarios involving remote fruit monitoring with real-time visual and data updates.
